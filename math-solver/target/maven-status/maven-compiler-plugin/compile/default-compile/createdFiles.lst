@@ -1,0 +1,4 @@
+com/tvet/mathsolver/solvers/WebQuadraticSolver.class
+com/tvet/mathsolver/MathSolverApplication.class
+com/tvet/mathsolver/controllers/MathController.class
+com/tvet/mathsolver/models/QuadraticInput.class

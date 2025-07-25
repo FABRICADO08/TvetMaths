@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVET Math Solver</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #1c1e21;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #606770;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #166fe5;
+        }
+        #solution-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #e7f3ff;
+            border: 1px solid #b3d7ff;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            font-family: "Courier New", Courier, monospace;
+            line-height: 1.5;
+            color: #0d3b66;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quadratic Equation Solver</h1>
+        <form id="solver-form">
+            <div class="input-group">
+                <label for="coeff-a">Enter coefficient 'a'</label>
+                <input type="number" id="coeff-a" value="1" required>
+            </div>
+            <div class="input-group">
+                <label for="coeff-b">Enter coefficient 'b'</label>
+                <input type="number" id="coeff-b" value="-3" required>
+            </div>
+            <div class="input-group">
+                <label for="coeff-c">Enter coefficient 'c'</label>
+                <input type="number" id="coeff-c" value="-4" required>
+            </div>
+            <button type="submit">Calculate Solution</button>
+        </form>
+        <div id="solution-box" style="display:none;"></div>
+    </div>
+
+    <script>
+        document.getElementById('solver-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const a = document.getElementById('coeff-a').value;
+            const b = document.getElementById('coeff-b').value;
+            const c = document.getElementById('coeff-c').value;
+            const solutionBox = document.getElementById('solution-box');
+
+            const requestData = {
+                a: parseFloat(a),
+                b: parseFloat(b),
+                c: parseFloat(c)
+            };
+
+            solutionBox.style.display = 'block';
+            solutionBox.innerHTML = 'Calculating...';
+
+            try {
+                // IMPORTANT: Use a relative URL so it works when deployed
+                const response = await fetch('/api/solve/quadratic', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const solutionText = await response.text();
+
+                if (response.ok) {
+                    solutionBox.innerHTML = solutionText;
+                } else {
+                    solutionBox.innerHTML = `<strong>Error:</strong> ${solutionText}`;
+                }
+
+            } catch (error) {
+                solutionBox.innerHTML = '<strong>Error:</strong> Could not connect to the solver. Please ensure the Java application is running.';
+                console.error('Fetch error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
